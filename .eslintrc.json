@@ -1,0 +1,23 @@
+{
+  "extends": [
+    "standard",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": [
+    "react",
+    "@typescript-eslint",
+    "eslint-plugin-react-hooks",
+    "eslint-plugin-react-refresh"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-indent": ["error", 2], 
+    "react/jsx-indent-props": ["error", 2]
+  }
+}
