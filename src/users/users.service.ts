@@ -1,30 +1,48 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { OTPData, OTPService } from 'src/config/otp';
 import { OtpDto } from './dto/otp.dto';
+import { EmailService } from 'src/email/email.service';
+import { RegisterUserDto } from 'src/auth/dto/register-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private readonly emailService: EmailService,
+  ) {}
 
-  async createNewUser(createUserDto: CreateUserDto) {
+  async createNewUser(registerUserDto: RegisterUserDto) {
     try {
+      const existUserName = await this.userModel.findOne({
+        user_name: registerUserDto.user_name,
+      });
+      if (existUserName) {
+        throw new BadRequestException('User name already exists');
+      }
       //Generar usuario
-      const newUser = new this.userModel(createUserDto);
+      const newUser = new this.userModel(registerUserDto);
       //Generar codigo otp El codigo se genera con una expiracion de 15 minutos
       const otp: OTPData = await OTPService.generateOTP(15);
       newUser.code_otp = otp.expiration.toString();
       newUser.code_op_expired = otp.expiration;
-      //Guardar usuario a la db
-      return await newUser.save();
       //Enviar email
+      await this.emailService.verifyEmail(
+        registerUserDto.user_name,
+        registerUserDto.email,
+        otp.otp,
+      );
+      //Guardar usuario a la db
+      await newUser.save();
+      return { message: 'User created' };
     } catch (error) {
+      console.error(error);
       if (error.code === 11000) {
         throw new BadRequestException('Email already exists');
       }
+      throw new BadRequestException(error.message);
     }
   }
 

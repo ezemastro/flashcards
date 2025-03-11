@@ -5,12 +5,14 @@ import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { envs } from './config/envs';
 import { JwtModule } from '@nestjs/jwt';
+import { EmailModule } from './email/email.module';
 @Module({
   imports: [
     MongooseModule.forRoot(envs.url_db),
     DecksModule,
     UsersModule,
     AuthModule,
+    EmailModule,
     JwtModule.register({
       global: true,
       secret: envs.secret_jwt,
