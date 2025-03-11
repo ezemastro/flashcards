@@ -24,11 +24,21 @@
 
 ## Env
 
-  PORT_API=
-  
-  URL_DB=
-  
-  SECRET_JWT=
+ PORT_API= 
+
+ URL_DB=
+ 
+ SECRET_JWT=
+ 
+ HOST_SMTP_EMAIL=
+
+ PORT_SMTP_EMAIL=
+
+ AUTH_USER_EMAIL=
+
+ AUTH_PASS_EMAIL=
+
+ EMAIL_FROM=
 
 ## Project setup
 
