@@ -1,5 +1,8 @@
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom'
 import Nav from './components/Nav'
+import Register from './page/Register'
+import Login from './page/Login'
+import Search from './page/Search'
 
 function App () {
   const Layout = () => {
@@ -15,7 +18,24 @@ function App () {
     {
       path: '/',
       element: <Layout />,
-      children: []
+      children: [
+        {
+          path: '/register',
+          element: <Register />
+        },
+        {
+          path: '/login',
+          element: <Login />
+        },
+        {
+          path: '/search',
+          element: <Search />
+        },
+        {
+          path: '*',
+          element: <h1>404</h1>
+        }
+      ]
     }
   ])
   return (

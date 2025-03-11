@@ -6,6 +6,7 @@
   --f-color: #054A91;
   --black-color: #000000;
   --white-color: #ffffff;
+  --shadow: 1px 1px 5px rgba(0, 0, 0, 0.25);
 }
 
 [data-theme='dark'] {

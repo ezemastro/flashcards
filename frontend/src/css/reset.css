@@ -4,3 +4,13 @@
   margin: 0;
   list-style: none;
 }
+
+body {
+  background-color: var(--bg-color);
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
