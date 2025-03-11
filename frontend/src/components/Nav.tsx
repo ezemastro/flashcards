@@ -20,8 +20,8 @@ export default function Nav () {
           )
         : (
           <div>
+            <Link to='/register'>Sign up</Link>
             <Link to='/login'>Login</Link>
-            <Link to='/register'>Register</Link>
           </div>
           )}
     </StyledNav>
@@ -29,22 +29,57 @@ export default function Nav () {
 }
 
 const StyledNav = styled.nav`
-  background-color: lightgray;
+  background-color: var(--s-color);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0 1rem;
-  height: 4rem;
-  font-size: 1.5rem;
+  padding: 0 2rem;
+  height: 5rem;
+  width: 100%;
+
+  h2{
+    color: var(--black-color);
+    font-size: 2rem;
+    font-weight: normal;
+  }
 
   ul {
-    background-color: white;
+    background-color: var(--bg-color);
     align-self: end;
-    height: 50%;
     display: flex;
-    gap: 3rem;
-    list-style: none;
-    padding: .5rem 2rem 0 2rem;
+    height: 3rem;
     border-radius: 2rem 2rem 0 0;
+
+    li {
+      margin: 0 1rem;
+      height: 100%;
+      width: 6rem;
+
+      a {
+        color: var(--black-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        text-decoration: none;
+      }
+    }
+  }
+
+  &>div{
+    justify-self: flex-end;
+    display: flex;
+    gap: 1rem;
+
+    a{
+      font-size: 1.2rem;
+      color: var(--black-color);
+      text-decoration: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 3rem;
+      width: 6rem;
+      background-color: var(--bg-color);
+    }
   }
 `
