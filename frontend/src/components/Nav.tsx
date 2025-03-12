@@ -44,7 +44,7 @@ const StyledNav = styled.nav`
     color: var(--black-color);
     font-size: 2rem;
     font-weight: normal;
-    width: 13rem;
+    width: 14rem;
 
     a{
       color: var(--black-color);

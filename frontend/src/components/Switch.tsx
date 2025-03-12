@@ -33,7 +33,7 @@ const StyledSwitch = styled.div`
   position: relative;
   padding: 0.2rem 0;
   background-color: var(--s-color);
-  border-radius: 1rem;
+  border-radius: 2rem;
   text-align: center;
   user-select: none;
   cursor: pointer;
@@ -52,7 +52,7 @@ const StyledSwitch = styled.div`
     left: 50%;
     width: 50%;
     height: 100%;
-    border-radius: 1rem;
+    border-radius: 2rem;
     background-color: var(--t-color);
     transition: all 0.2s ease-in-out;
   }
