@@ -6,6 +6,7 @@ import { Deck } from './entities/deck.entity';
 import { Model, Types } from 'mongoose';
 import { AddCartsDto } from './dto/add-cards.dto';
 import { DeleteCardsDto } from './dto/delete-cards.dto';
+import { SearchCardsDto } from './dto/search_cards';
 
 @Injectable()
 export class DecksService {
@@ -120,8 +121,68 @@ export class DecksService {
         public: 1,
         likes: 1,
         categories: 1,
+        cardsCount: { $size: '$cards' },
       },
     );
+    if (decks.length === 0) {
+      return { message: 'No decks found' };
+    }
+    if (!decks) {
+      throw new NotFoundException('No decks found');
+    }
+    return decks;
+  }
+
+  //LISTA LAS CARTAS DE UN DECK DEL USUARIO
+  async listCardsByDeckByUser(deleteDeckDto: UpdateDeckDto) {
+    const deck = await this.findDeckByUser(
+      deleteDeckDto.id_deck,
+      deleteDeckDto.id_user,
+    );
+    if (!deck) {
+      throw new NotFoundException('Deck not found');
+    }
+    return deck;
+  }
+
+  //BUSCADOR DE DECKS PUBLICOS POR TEXTO
+  async searchDecksPublics(searchCardsDto: SearchCardsDto) {
+    const { page = 1, limit = 20 } = searchCardsDto;
+    const skip = (page - 1) * limit;
+    const searchArray = searchCardsDto.search
+      .toLowerCase()
+      .replace('_', ' ')
+      .split(' ');
+    console.log(searchArray);
+    console.log(searchCardsDto);
+    const decks = await this.deckModel.aggregate([
+      {
+        $match: {
+          public: true,
+          $or: [
+            { name: { $regex: searchCardsDto.search, $options: 'i' } },
+            { categories: { $in: [searchCardsDto.category] } },
+            { categories: { $in: searchArray } },
+          ],
+        },
+      },
+      {
+        $project: {
+          id_user: 1,
+          name: 1,
+          public: 1,
+          likes: 1,
+          categories: 1,
+          cardsCount: { $size: '$cards' },
+        },
+      },
+      {
+        $skip: skip,
+      },
+      {
+        $limit: limit,
+      },
+    ]);
     if (decks.length === 0) {
       return { message: 'No decks found' };
     }
