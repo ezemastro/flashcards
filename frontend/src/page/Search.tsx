@@ -2,11 +2,28 @@ import { useRef, useState } from 'react'
 import styled from 'styled-components'
 import Switch from '../components/Switch'
 import { useDraggable } from 'react-use-draggable-scroll'
+import Card from '../components/Card'
+import mockResponse from '../mock/card.json'
 
 export default function Search () {
   // TODO - get categories
   const [categories, setCategories] = useState<string[]>(['category', '2 category'])
+  const [cards, setCards] = useState<Card[]>(mockResponse.cards)
   const typeRef = useRef<HTMLInputElement>(null)
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const type = typeRef.current?.checked ? 'decks' : 'cards'
+    const query = e.currentTarget.query.value
+    const categories: string[] = []
+
+    e.currentTarget.category.forEach((input: HTMLInputElement) => {
+      if (input.checked) categories.push(input.value)
+    })
+
+    console.log({ type, query, categories })
+  }
 
   // drag
   const dragRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
@@ -14,7 +31,7 @@ export default function Search () {
 
   return (
     <StyledSearchMain>
-      <form action="" method="get">
+      <form action="" method="get" onSubmit={handleSubmit}>
         <section className='filters'>
           <Switch opts={['Cards', 'Decks']} inputRef={typeRef} className="switch" />
           <div className='search'>
@@ -24,11 +41,13 @@ export default function Search () {
         </section>
         <section className='categories' {...events} ref={dragRef}>
           {/* TODO - Add categories */}
-          {categories.map(category => <div key={category}>{category}</div>)}
+          {categories.map(category => (
+            <label key={category} className='category'>{category}<input type="checkbox" name="category" value={category} /></label>
+          ))}
         </section>
       </form>
       <section className='results'>
-        Results go here
+        {cards.map(card => <Card key={card._id} card={card} />)}
       </section>
     </StyledSearchMain>
   )
@@ -101,17 +120,35 @@ const StyledSearchMain = styled.main`
         display: none;
       }
 
-      div {
+      .category {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        cursor: pointer;
         background-color: var(--s-color);
         border-radius: 2rem;
         padding: 0.5rem 1rem;
         user-select: none;
+        transition: all 0.1s ease-out;
+
+        input {
+          display: none;
+        }
+      }
+
+      .category:has(input:checked) {
+        background-color: var(--t-color);
       }
     }
   }
+  
+  .results {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
 
+    .card {
+      width: 15rem;
+    }
+  }
 `

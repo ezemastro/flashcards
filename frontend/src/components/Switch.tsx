@@ -12,7 +12,6 @@ export default function Switch ({ opts, inputRef, className }: Props) {
 
   const handleClick = () => {
     if (inputRef.current === null) return
-    console.log(inputRef.current.checked)
     inputRef.current.click()
   }
 
@@ -49,7 +48,7 @@ const StyledSwitch = styled.div`
 
   span {
     position: absolute;
-    left: 50%;
+    left: 0;
     width: 50%;
     height: 100%;
     border-radius: 2rem;
@@ -58,6 +57,6 @@ const StyledSwitch = styled.div`
   }
 
   input:checked ~ span {
-    left: 0;    
+    left: 50%;    
   }
 `

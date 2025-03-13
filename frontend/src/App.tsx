@@ -3,6 +3,8 @@ import Nav from './components/Nav'
 import Register from './page/Register'
 import Login from './page/Login'
 import Search from './page/Search'
+import Cards from './page/Cards'
+import Decks from './page/Decks'
 
 function App () {
   const Layout = () => {
@@ -30,6 +32,14 @@ function App () {
         {
           path: '/search',
           element: <Search />
+        },
+        {
+          path: '/cards',
+          element: <Cards />
+        },
+        {
+          path: '/decks',
+          element: <Decks />
         },
         {
           path: '*',

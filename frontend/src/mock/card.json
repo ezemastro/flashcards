@@ -1,0 +1,31 @@
+{
+  "_id": "67d065d07c5259d870c60c05",
+  "name": "deck01",
+  "cards": [
+      {
+          "_id": "67d065d07c5259d870c60c06",
+          "question": "8x6",
+          "answer": "36",
+          "category": "matematicas",
+          "createdAt": "2025-03-11T16:33:20.338Z",
+          "updatedAt": "2025-03-11T16:33:20.338Z"
+      },
+      {
+          "_id": "67d065d07c5259d870c60c07",
+          "question": "¿quien descubrio america?",
+          "answer": "cristobal colon",
+          "category": "Historia",
+          "createdAt": "2025-03-11T16:33:20.338Z",
+          "updatedAt": "2025-03-11T16:33:20.338Z"
+      }
+  ],
+  "public": false,
+  "categories": [
+      "matematicas",
+      "Historia"
+  ],
+  "id_user": "67cb6896daada57a386dde10",
+  "createdAt": "2025-03-11T16:33:20.338Z",
+  "updatedAt": "2025-03-11T16:33:20.338Z",
+  "__v": 0
+}
