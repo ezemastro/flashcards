@@ -1,7 +1,9 @@
-import { createContext, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
+import { getToken } from '../utils/token'
 
 interface Session {
-  username: string
+  username: string,
+  id: string
 }
 interface SessionContext {
   session: Session | null
@@ -15,10 +17,19 @@ export const SessionContext = createContext<SessionContext>({
 
 export const SessionProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<SessionContext['session']>(null)
-  // in useEffect get session
+
+  useEffect(() => {
+    if (!getToken()) return setSession(null)
+    const session = localStorage.getItem('session')
+    if (!session) return setSession(null)
+    const parsedSession = JSON.parse(session)
+    if (!parsedSession.id || !parsedSession.username) return setSession(null)
+    setSession({ id: parsedSession.id, username: parsedSession.username })
+  }, [])
 
   const newSession = (session: Session) => {
     setSession(session)
+    localStorage.setItem('session', JSON.stringify(session))
   }
 
   return (

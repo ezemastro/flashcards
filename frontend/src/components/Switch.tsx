@@ -1,18 +1,27 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 type Props = {
   opts: [string, string],
   inputRef: React.RefObject<HTMLInputElement>,
-  className?: string
+  className?: string,
+  defaultChecked?: boolean,
+  onChange?: () => void
 }
 
-export default function Switch ({ opts, inputRef, className }: Props) {
+export default function Switch ({ opts, inputRef, className, defaultChecked, onChange }: Props) {
   const switchRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (inputRef.current === null) return
+    if (defaultChecked) inputRef.current.checked = true
+  }, [])
 
   const handleClick = () => {
     if (inputRef.current === null) return
     inputRef.current.click()
+
+    onChange?.()
   }
 
   return (

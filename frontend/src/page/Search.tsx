@@ -1,17 +1,18 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import Switch from '../components/Switch'
 import { useDraggable } from 'react-use-draggable-scroll'
 import Card from '../components/Card'
 import mockResponse from '../mock/card.json'
+import { type Search, search } from '../services/search'
 
 export default function Search () {
   // TODO - get categories
-  const [categories, setCategories] = useState<string[]>(['category', '2 category'])
-  const [cards, setCards] = useState<Card[]>(mockResponse.cards)
+  const [categories, setCategories] = useState<string[]>([])
+  const [results, setResults] = useState<Search<'cards' | 'decks'>>({ type: 'cards', results: mockResponse.cards })
   const typeRef = useRef<HTMLInputElement>(null)
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     const type = typeRef.current?.checked ? 'decks' : 'cards'
@@ -22,8 +23,26 @@ export default function Search () {
       if (input.checked) categories.push(input.value)
     })
 
-    console.log({ type, query, categories })
+    try {
+      const response = await search({ query, categories, type })
+      setResults(response)
+    } catch (error) {
+      setResults({ type, results: [] })
+      console.error(error)
+    }
   }
+
+  useEffect(() => {
+    let categories: string[] = []
+    if (results.type === 'decks') {
+      const decks = results.results as Deck[]
+      categories = decks.flatMap(decks => decks.categories)
+    } else if (results.type === 'cards') {
+      const cards = results.results as Card[]
+      categories = cards.map(card => card.category)
+    }
+    setCategories(categories.filter((category, index) => categories.indexOf(category) === index))
+  }, [results])
 
   // drag
   const dragRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
@@ -47,7 +66,8 @@ export default function Search () {
         </section>
       </form>
       <section className='results'>
-        {cards.map(card => <Card key={card._id} card={card} />)}
+        {results.type === 'cards' && results.results.map(card => <Card key={card._id} card={card as Card} />)}
+        {results.type === 'decks' && results.results.map(deck => <Deck key={deck._id} deck={deck as Deck} />)}
       </section>
     </StyledSearchMain>
   )
@@ -80,6 +100,7 @@ const StyledSearchMain = styled.main`
         border-radius: 2rem;
         padding: 0.5rem 1rem;
         width: 100%;
+        height: 2.5rem;
         
         input {
           background-color: transparent;
@@ -110,6 +131,7 @@ const StyledSearchMain = styled.main`
 
     .categories {
       max-width: 100%;
+      height: 2.5rem;
       overflow-x: scroll;
       display: flex;
       justify-content: start;

@@ -5,13 +5,18 @@ import Login from './page/Login'
 import Search from './page/Search'
 import Cards from './page/Cards'
 import Decks from './page/Decks'
+import Deck from './page/Deck'
+import { ToastContainer } from 'react-toastify'
+import { useTheme } from './hook/theme'
 
 function App () {
+  const { theme } = useTheme()
   const Layout = () => {
     return (
       <>
         <Nav />
         <Outlet />
+        <ToastContainer theme={theme} position='bottom-right' />
       </>
     )
   }
@@ -40,6 +45,10 @@ function App () {
         {
           path: '/decks',
           element: <Decks />
+        },
+        {
+          path: '/decks/:id',
+          element: <Deck />
         },
         {
           path: '*',

@@ -12,8 +12,8 @@ export const StyledAuthMain = styled.main`
     flex-direction: column;
     align-items: center;
     border-radius: 2rem;
-    padding: 2rem;
-    gap: 2rem;
+    padding: 1.5rem 2rem;
+    gap: 0.5rem;
     min-width: 30rem;
     box-shadow: var(--shadow);
 
@@ -34,10 +34,24 @@ export const StyledAuthMain = styled.main`
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
+        position: relative;
 
         label {
           font-weight: lighter;
           font-size: 1.3rem;
+          margin-left: 0.3rem;
+        }
+
+        .error {
+          color: var(--f-color);
+          position: absolute;
+          top: -0.7rem;
+          right: 0;
+        }
+        .error::before {
+          content: "*";
+          position: absolute;
+          left: -0.8rem;
         }
 
       }
@@ -59,6 +73,9 @@ export const StyledAuthMain = styled.main`
         color: var(--white-color);
         font-size: 1.3rem;
       }
+    }
+    p {
+      margin-top: 1rem;
     }
   }
 `

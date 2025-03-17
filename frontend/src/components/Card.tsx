@@ -50,6 +50,7 @@ const StyledCard = styled.div`
   .info {
     display: flex;
     justify-content: space-between;
+    gap: 1rem;
 
     div {
       background-color: var(--bg-color);
