@@ -3,13 +3,14 @@ import styled from 'styled-components'
 import Switch from '../components/Switch'
 import { useDraggable } from 'react-use-draggable-scroll'
 import Card from '../components/Card'
-import mockResponse from '../mock/card.json'
+import mockResponse from '../mock/deck.json'
 import { type Search, search } from '../services/search'
+import Deck from '../components/Deck'
 
 export default function Search () {
   // TODO - get categories
   const [categories, setCategories] = useState<string[]>([])
-  const [results, setResults] = useState<Search<'cards' | 'decks'>>({ type: 'cards', results: mockResponse.cards })
+  const [results, setResults] = useState<Search<'cards' | 'decks'>>({ type: 'decks', results: mockResponse })
   const typeRef = useRef<HTMLInputElement>(null)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -19,7 +20,7 @@ export default function Search () {
     const query = e.currentTarget.query.value
     const categories: string[] = []
 
-    e.currentTarget.category.forEach((input: HTMLInputElement) => {
+    e.currentTarget.category?.forEach((input: HTMLInputElement) => {
       if (input.checked) categories.push(input.value)
     })
 
@@ -52,7 +53,7 @@ export default function Search () {
     <StyledSearchMain>
       <form action="" method="get" onSubmit={handleSubmit}>
         <section className='filters'>
-          <Switch opts={['Cards', 'Decks']} inputRef={typeRef} className="switch" />
+          <Switch opts={['Cards', 'Decks']} inputRef={typeRef} className="switch" defaultChecked={results.type === 'decks'} />
           <div className='search'>
             <input type="text" name="query" placeholder='Search...' />
             <button type="submit">🔍</button>
@@ -113,10 +114,6 @@ const StyledSearchMain = styled.main`
           &:focus {
             outline: none;
           }
-          &::placeholder {
-            color: var(--black-color);
-            opacity: 0.8;
-          }
         }
         button {
           cursor: pointer;
@@ -152,6 +149,10 @@ const StyledSearchMain = styled.main`
         user-select: none;
         transition: all 0.1s ease-out;
 
+        &:hover {
+          cursor: pointer;
+        }
+        
         input {
           display: none;
         }
@@ -169,7 +170,7 @@ const StyledSearchMain = styled.main`
     justify-content: center;
     gap: 2rem;
 
-    .card {
+    .card, .deck {
       width: 15rem;
     }
   }

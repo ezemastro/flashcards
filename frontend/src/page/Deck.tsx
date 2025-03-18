@@ -8,18 +8,25 @@ import Card from '../components/Card'
 import deckMock from '../mock/deck.json'
 import cardsMock from '../mock/card.json'
 import { useDraggable } from 'react-use-draggable-scroll'
+import { updateDeck } from '../services/updateDeck'
+import { ValidationError } from '../utils/errors'
+import { toast } from 'react-toastify'
+import { descSchema, titleSchema } from '../utils/validations'
+import { useModal } from '../hook/modal'
+import { createDeck } from '../services/createDeck'
+import ConfirmModal from '../components/ConfirmModal'
 
 export default function Deck () {
   const { session } = useSession()
   const navigate = useNavigate()
   const params = useParams()
-  const [deck, setDeck] = useState<Deck | null>(deckMock)
+  const [deck, setDeck] = useState<Deck | null>(deckMock[0])
   const [cards, setCards] = useState<Card[]>(cardsMock.cards)
   const [isModified, setIsModified] = useState(false)
   const [categories, setCategories] = useState<string[]>([])
+  const { showModal, closeModal } = useModal()
 
   useEffect(() => {
-    // if (!session) navigate('/login')
     if (!params.id) navigate('/')
     /*
     getDeck(session!.id, params.id!)
@@ -33,6 +40,54 @@ export default function Deck () {
     setCategories(categories.filter((category, index) => categories.indexOf(category) === index))
   }, [cards])
 
+  const handleSave = async () => {
+    const title = titleRef.current?.value
+    const isPublic = switchRef.current?.checked
+    const desc = descRef.current?.value
+
+    if (!titleSchema.safeParse(title).success) return toast.error('Invalid title')
+    if (!descSchema.safeParse(desc).success) return toast.error('Invalid description')
+
+    if (!title || typeof isPublic !== 'boolean' || !desc || !params.id) return toast.error('Invalid')
+
+    if (deck?.id_user === session?.id) {
+      try {
+        await updateDeck({ id: params.id!, title: title!, isPublic: isPublic!, desc: desc! })
+      } catch (error) {
+        if (error instanceof ValidationError) toast.error(error.message)
+        else toast.error('Something went wrong')
+        return
+      }
+
+      toast.success('Deck updated')
+      setIsModified(false)
+    } else {
+      // create a copy
+      const handleConfirm = async () => {
+        closeModal()
+        try {
+          await createDeck({ userId: session!.id, title: title!, isPublic: isPublic!, desc: desc!, cards })
+        } catch (error) {
+          if (error instanceof ValidationError) toast.error(error.message)
+          else toast.error('Something went wrong')
+          return
+        }
+
+        toast.success('Deck created')
+        setIsModified(false)
+      }
+
+      showModal(<ConfirmModal
+        closeModal={closeModal}
+        title='You will own a copy of this deck'
+        message='As this deck is not yours, you will own a copy of it with the changes you made.'
+        onConfirm={handleConfirm}
+      />)
+    }
+  }
+  const titleRef = useRef<HTMLInputElement>(null)
+  const descRef = useRef<HTMLTextAreaElement>(null)
+
   const switchRef = useRef<HTMLInputElement>(null)
 
   // drag
@@ -42,12 +97,25 @@ export default function Deck () {
   return (
     <StyledDeckMain>
       <section className='header'>
-        {isModified && <button className='save' onClick={() => { }}>Save</button>}
-        <input className='title' type="text" defaultValue={deck?.name} onChange={() => { if (!isModified) setIsModified(true) }} />
+        {isModified && <button className='save' onClick={handleSave}>Save</button>}
+        <input
+          className='title'
+          type="text"
+          ref={titleRef}
+          placeholder='Title...'
+          defaultValue={deck?.name}
+          onChange={() => { if (!isModified) setIsModified(true) }}
+        />
         <div className="info">
           <div className="desc">
             <h3>Description</h3>
-            <textarea className='description' defaultValue={deck?.description} onChange={() => { if (!isModified) setIsModified(true) }} placeholder='Description' />
+            <textarea
+              className='description'
+              ref={descRef}
+              defaultValue={deck?.description}
+              placeholder='Description...'
+              onChange={() => { if (!isModified) setIsModified(true) }}
+            />
           </div>
           <div className="data">
             <div className="like"><img src="" alt="" /><p>{deck?.likes}</p></div>

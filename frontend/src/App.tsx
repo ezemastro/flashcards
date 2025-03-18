@@ -8,6 +8,7 @@ import Decks from './page/Decks'
 import Deck from './page/Deck'
 import { ToastContainer } from 'react-toastify'
 import { useTheme } from './hook/theme'
+import { ModalContainer } from './context/modal'
 
 function App () {
   const { theme } = useTheme()
@@ -15,7 +16,9 @@ function App () {
     return (
       <>
         <Nav />
-        <Outlet />
+        <ModalContainer>
+          <Outlet />
+        </ModalContainer>
         <ToastContainer theme={theme} position='bottom-right' />
       </>
     )

@@ -3,7 +3,7 @@ import { StyledAuthMain } from '../styled/AuthMain'
 import { emailSchema, passwordSchema, usernameSchema } from '../utils/validations'
 import { useEffect, useState } from 'react'
 import { register } from '../services/auth'
-import { AuthError } from '../utils/errors'
+import { ValidationError } from '../utils/errors'
 import { toast } from 'react-toastify'
 import { BeatLoader } from 'react-spinners'
 
@@ -45,7 +45,7 @@ export default function Register () {
       setIsLoading(false)
     } catch (error) {
       setIsLoading(false)
-      if (error instanceof AuthError) errors.invalid = true
+      if (error instanceof ValidationError) errors.invalid = true
       else errors.error = true
       setErrors(errors)
       return

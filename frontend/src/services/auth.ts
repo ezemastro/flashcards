@@ -1,5 +1,5 @@
 import { API_URL } from '../config'
-import { AuthError, FetchError } from '../utils/errors'
+import { ValidationError, FetchError } from '../utils/errors'
 import { saveToken } from '../utils/token'
 
 export const login = async (email: string, password: string) => {
@@ -23,7 +23,7 @@ export const login = async (email: string, password: string) => {
       if (error ! instanceof Error) console.error('error')
       throw new FetchError(response.statusText)
     }
-    if (data) throw new AuthError(data.message)
+    if (data) throw new ValidationError(data.message)
   }
 
   const data = await response.json()
@@ -54,6 +54,6 @@ export const register = async (username :string, email: string, password: string
       if (error ! instanceof Error) console.error('error')
       throw new FetchError(response.statusText)
     }
-    if (data) throw new AuthError(data.message)
+    if (data) throw new ValidationError(data.message)
   }
 }

@@ -39,6 +39,7 @@ const StyledNav = styled.nav`
   padding: 0 2rem;
   height: 5rem;
   width: 100%;
+  z-index: 2;
 
   h2{
     color: var(--black-color);

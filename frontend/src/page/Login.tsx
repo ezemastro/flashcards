@@ -4,7 +4,7 @@ import { emailSchema, passwordSchema } from '../utils/validations'
 import { useEffect, useState } from 'react'
 import { login } from '../services/auth'
 import { useSession } from '../hook/session'
-import { AuthError } from '../utils/errors'
+import { ValidationError } from '../utils/errors'
 import { toast } from 'react-toastify'
 import { BeatLoader } from 'react-spinners'
 
@@ -44,7 +44,7 @@ export default function Login () {
       username = loginResponse.username
     } catch (error) {
       setIsLoading(false)
-      if (error instanceof AuthError) errors.invalid = true
+      if (error instanceof ValidationError) errors.invalid = true
       else errors.error = true
       setErrors(errors)
       return

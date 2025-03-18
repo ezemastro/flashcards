@@ -14,3 +14,8 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+*::placeholder {
+  color: var(--black-color);
+  opacity: 0.8;
+}
