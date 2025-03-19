@@ -5,8 +5,6 @@ import { useSession } from '../hook/session'
 import { getDeck } from '../services/getDeck'
 import Switch from '../components/Switch'
 import Card from '../components/Card'
-import deckMock from '../mock/deck.json'
-import cardsMock from '../mock/card.json'
 import { useDraggable } from 'react-use-draggable-scroll'
 import { updateDeck } from '../services/updateDeck'
 import { ValidationError } from '../utils/errors'
@@ -15,25 +13,41 @@ import { descSchema, titleSchema } from '../utils/validations'
 import { useModal } from '../hook/modal'
 import { createDeck } from '../services/createDeck'
 import ConfirmModal from '../components/ConfirmModal'
+import { getDeckCards } from '../services/getDeckCards'
 
 export default function Deck () {
   const { session } = useSession()
   const navigate = useNavigate()
   const params = useParams()
-  const [deck, setDeck] = useState<Deck | null>(deckMock[0])
-  const [cards, setCards] = useState<Card[]>(cardsMock.cards)
+  const [deck, setDeck] = useState<Deck | null>(null)
+  const [cards, setCards] = useState<Card[]>([])
   const [isModified, setIsModified] = useState(false)
   const [categories, setCategories] = useState<string[]>([])
   const { showModal, closeModal } = useModal()
 
   useEffect(() => {
+    if (!session) {
+      toast.error('You must be logged in')
+      navigate('/login')
+      return
+    }
     if (!params.id) navigate('/')
-    /*
+
     getDeck(session!.id, params.id!)
       .then(deck => setDeck(deck))
-      .catch(() => navigate('/'))
-      */
+      .catch(() => {
+        toast.error('Deck not found')
+        navigate('/')
+      })
   }, [])
+
+  useEffect(() => {
+    if (!deck) return
+    if (!params.id) return
+    getDeckCards(params.id)
+      .then(cards => setCards(cards))
+      .catch(() => toast.error('Something went wrong'))
+  }, [deck])
 
   useEffect(() => {
     const categories = cards.map(card => card.category)
@@ -65,14 +79,16 @@ export default function Deck () {
       // create a copy
       const handleConfirm = async () => {
         closeModal()
+        let newDeck: Deck
         try {
-          await createDeck({ userId: session!.id, title: title!, isPublic: isPublic!, desc: desc!, cards })
+          newDeck = await createDeck({ userId: session!.id, title: title!, isPublic: isPublic!, desc: desc!, cards })
         } catch (error) {
           if (error instanceof ValidationError) toast.error(error.message)
           else toast.error('Something went wrong')
           return
         }
 
+        window.history.replaceState(null, '', (`/decks/${newDeck._id}`))
         toast.success('Deck created')
         setIsModified(false)
       }

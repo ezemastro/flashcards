@@ -31,6 +31,9 @@ export const ModalContainer = ({ children }: { children: React.ReactNode }) => {
 
 const StyledContainer = styled.div`
   position: relative;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 
   .overlay {
     position: fixed;
