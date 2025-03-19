@@ -7,8 +7,8 @@ import {
 import { CreateCardDto } from './create-deck.dto';
 import { Type } from 'class-transformer';
 
-export class AddCartsDto {
-  @IsNotEmpty()
+export class AddCardsDto {
+  @IsOptional()
   @IsMongoId()
   id_user: string;
   @IsNotEmpty()

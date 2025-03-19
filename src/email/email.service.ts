@@ -8,7 +8,6 @@ export class EmailService {
   async verifyEmail(name: string, email: string, otp: string) {
     try {
       const subject = `CODECODE. Verificacion de email`;
-      console.log(email);
       await this.mailerService.sendMail({
         to: email,
         subject,

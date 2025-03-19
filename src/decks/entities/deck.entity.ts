@@ -1,6 +1,27 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import * as mongoose from 'mongoose';
+@Schema()
+export class Like {
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+    index: true,
+  })
+  id_user: string;
+
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Deck',
+    required: true,
+    index: true,
+  })
+  id_deck: string;
+}
+
+export type LikeDocument = HydratedDocument<Like>;
+export const LikeSchema = SchemaFactory.createForClass(Like);
 
 @Schema({ timestamps: true })
 export class Card {
@@ -34,6 +55,9 @@ export class Deck {
   @Prop()
   name: string;
 
+  @Prop({})
+  description: string;
+
   @Prop({
     type: [CardSchema],
   })
@@ -47,8 +71,11 @@ export class Deck {
   @Prop({ type: [String] })
   categories: string[];
 
-  @Prop()
+  @Prop({ default: 0 })
   likes: number;
+
+  @Prop({ index: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  id_creator: string;
 
   @Prop({ index: true, type: mongoose.Schema.Types.ObjectId })
   id_user: string;

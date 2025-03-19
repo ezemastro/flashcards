@@ -1,7 +1,7 @@
 import { IsMongoId, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class DeleteCardsDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsMongoId()
   id_user: string;
   @IsNotEmpty()

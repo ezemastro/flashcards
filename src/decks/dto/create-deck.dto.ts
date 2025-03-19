@@ -23,13 +23,22 @@ export class CreateCardDto {
 }
 
 export class CreateDeckDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsMongoId()
   id_user: string;
 
   @IsNotEmpty()
+  @IsMongoId()
+  id_creator: string;
+
+  @IsNotEmpty()
   @IsString()
   name: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  description: string;
 
   @IsOptional()
   @IsBoolean()

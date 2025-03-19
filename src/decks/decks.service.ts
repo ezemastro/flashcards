@@ -2,21 +2,24 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDeckDto } from './dto/create-deck.dto';
 import { UpdateDeckDto } from './dto/update-deck.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Deck } from './entities/deck.entity';
+import { Deck, Like } from './entities/deck.entity';
 import { Model, Types } from 'mongoose';
-import { AddCartsDto } from './dto/add-cards.dto';
 import { DeleteCardsDto } from './dto/delete-cards.dto';
 import { SearchCardsDto } from './dto/search_cards';
+import { AddCardsDto } from './dto/add-cards.dto';
+import { UpdateCardDto } from './dto/update-card.dto';
 
 @Injectable()
 export class DecksService {
-  constructor(@InjectModel(Deck.name) private deckModel: Model<Deck>) {}
+  constructor(
+    @InjectModel(Deck.name) private deckModel: Model<Deck>,
+    @InjectModel(Like.name) private likeModel: Model<Like>,
+  ) {}
 
   async createDeck(createDeckDto: CreateDeckDto) {
     const newDeck = new this.deckModel(createDeckDto);
     for (const card of newDeck.cards) {
       if (card.category) {
-        console.log(card.category);
         newDeck.categories.push(card.category);
       }
     }
@@ -41,14 +44,17 @@ export class DecksService {
     if (updateDeckDto.public) {
       deck.public = updateDeckDto.public;
     }
+    if (updateDeckDto.description) {
+      deck.description = updateDeckDto.description;
+    }
     await deck.save();
     return { message: 'Deck updated' };
   }
 
-  async deleteDeck(deleteDeckDto: UpdateDeckDto) {
+  async deleteDeckByUser(id_user: string, id_deck: string) {
     const deck = await this.deckModel.findOneAndDelete({
-      id_user: deleteDeckDto.id_user,
-      _id: deleteDeckDto.id_deck,
+      id_user: id_user,
+      _id: id_deck,
     });
     if (!deck) {
       throw new NotFoundException('Deck not found');
@@ -56,8 +62,7 @@ export class DecksService {
     return { message: `The deck called ${deck.name} was deleted` };
   }
 
-  async addCartsToDeck(addCartsDto: AddCartsDto) {
-    console.log(addCartsDto);
+  async addCartsToDeck(addCartsDto: AddCardsDto) {
     const deck = await this.findDeckByUser(
       addCartsDto.id_deck,
       addCartsDto.id_user,
@@ -84,6 +89,42 @@ export class DecksService {
     return { message: 'Cards added' };
   }
 
+  async updateCard(updateCardDto: UpdateCardDto) {
+    const deck = await this.findDeckByUser(
+      updateCardDto.id_deck,
+      updateCardDto.id_user,
+    );
+    if (!deck) {
+      throw new NotFoundException('Deck not found');
+    }
+    //SEGUNDA OPCION QUE TUVE PARA ACTUALIZAR LA CARTA
+    const valueSet = {};
+    if (updateCardDto.question) {
+      valueSet['cards.$.question'] = updateCardDto.question;
+    }
+    if (updateCardDto.answer) {
+      valueSet['cards.$.answer'] = updateCardDto.answer;
+    }
+    if (updateCardDto.category) {
+      valueSet['cards.$.category'] = updateCardDto.category;
+    }
+    await this.deckModel.updateOne(
+      {
+        _id: new Types.ObjectId(updateCardDto.id_deck),
+        'cards._id': new Types.ObjectId(updateCardDto.id_card),
+      },
+      {
+        $set: valueSet,
+      },
+      {
+        arrayFilters: [
+          { 'card._id': new Types.ObjectId(updateCardDto.id_card) },
+        ],
+      },
+    );
+    return { message: 'Cards updated' };
+  }
+
   async DeleteCards(deleteCardsDto: DeleteCardsDto) {
     const deck = await this.findDeckByUser(
       deleteCardsDto.id_deck,
@@ -92,7 +133,6 @@ export class DecksService {
     if (!deck) {
       throw new NotFoundException('Deck not found');
     }
-    console.log(deleteCardsDto.id_cards);
     //se filtran las cartas que no se quieren eliminar
     const cardsNotDeleted = deck.cards.filter((card) => {
       //se verifica si el id de la carta no esta en el arreglo de cartas a eliminar
@@ -111,19 +151,24 @@ export class DecksService {
     if (!Types.ObjectId.isValid(id)) {
       throw new NotFoundException('Invalid id');
     }
-    const decks = await this.deckModel.find(
-      {
-        id_user: new Types.ObjectId(id),
-      },
-      {
-        id_user: 1,
-        name: 1,
-        public: 1,
-        likes: 1,
-        categories: 1,
-        cardsCount: { $size: '$cards' },
-      },
-    );
+    const decks = await this.deckModel
+      .find(
+        {
+          id_user: new Types.ObjectId(id),
+        },
+        {
+          id_user: 1,
+          name: 1,
+          public: 1,
+          likes: 1,
+          categories: 1,
+          cardsCount: { $size: '$cards' },
+        },
+      )
+      .populate({
+        path: 'id_creator',
+        select: 'user_name',
+      });
     if (decks.length === 0) {
       return { message: 'No decks found' };
     }
@@ -134,11 +179,8 @@ export class DecksService {
   }
 
   //LISTA LAS CARTAS DE UN DECK DEL USUARIO
-  async listCardsByDeckByUser(deleteDeckDto: UpdateDeckDto) {
-    const deck = await this.findDeckByUser(
-      deleteDeckDto.id_deck,
-      deleteDeckDto.id_user,
-    );
+  async listCardsByDeckByUser(id_deck: string, id_user: string) {
+    const deck = await this.findDeckByUser(id_deck, id_user);
     if (!deck) {
       throw new NotFoundException('Deck not found');
     }
@@ -153,8 +195,6 @@ export class DecksService {
       .toLowerCase()
       .replace('_', ' ')
       .split(' ');
-    console.log(searchArray);
-    console.log(searchCardsDto);
     const decks = await this.deckModel.aggregate([
       {
         $match: {
@@ -172,6 +212,7 @@ export class DecksService {
           name: 1,
           public: 1,
           likes: 1,
+          id_creator: 1,
           categories: 1,
           cardsCount: { $size: '$cards' },
         },
@@ -181,6 +222,33 @@ export class DecksService {
       },
       {
         $limit: limit,
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'id_creator',
+          foreignField: '_id',
+          as: 'creator',
+        },
+      },
+      {
+        $lookup: {
+          from: 'likes',
+          localField: '_id',
+          foreignField: 'id_deck',
+          as: 'likes',
+        },
+      },
+      {
+        $project: {
+          id_user: 1,
+          name: 1,
+          public: 1,
+          likes: 1,
+          categories: 1,
+          cardsCount: 1,
+          creator: '$creator.user_name',
+        },
       },
     ]);
     if (decks.length === 0) {
@@ -192,6 +260,64 @@ export class DecksService {
     return decks;
   }
 
+  async getDeckPublic(id_deck: string, id_user?: string) {
+    //se busca el deck por el id y que sea publico y se hace un populate para traer el nombre del creador
+    const deck = await this.deckModel
+      .findOne({
+        _id: new Types.ObjectId(id_deck),
+        public: true,
+      })
+      .populate({ path: 'id_creator', select: 'user_name' });
+    //se verifica si mandan el id del usuario
+    if (id_user) {
+      //se verifica si el usuario ha dado like al deck
+      const like = await this.hasUserLikedDeck(id_user, id_deck);
+      if (like) {
+        deck.set('liked', true, { strict: false });
+      }
+    }
+    if (!deck) {
+      throw new NotFoundException('Deck not found');
+    }
+    return deck;
+  }
+
+  async likeDeck(id_user: string, id_deck: string) {
+    const existLike = await this.likeModel.findOne({
+      id_deck: new Types.ObjectId(id_deck),
+      id_user: new Types.ObjectId(id_user),
+    });
+    if (existLike) {
+      throw new NotFoundException('You already liked this deck');
+    }
+    const newLike = new this.likeModel({
+      id_user: id_user,
+      id_deck: id_deck,
+    });
+    await newLike.save();
+    await this.deckModel.updateOne(
+      { _id: new Types.ObjectId(id_deck) },
+      { $inc: { likes: 1 } },
+    );
+    return { message: 'Deck liked' };
+  }
+
+  async unlikeDeck(id_user: string, id_deck: string) {
+    const deleteResult = await this.likeModel.deleteOne({
+      id_user: new Types.ObjectId(id_user),
+      id_deck: new Types.ObjectId(id_deck),
+    });
+    if (deleteResult.deletedCount === 0) {
+      throw new NotFoundException('User has not liked this post');
+    }
+    await this.deckModel.updateOne(
+      { _id: new Types.ObjectId(id_deck) },
+      { $inc: { likes: -1 } },
+    );
+    return { message: 'Deck unliked' };
+  }
+
+  //METODOS DE AYUDA
   async findDeckByUser(id_deck: string, id_user: string) {
     const deck = await this.deckModel.findOne({
       id_user: new Types.ObjectId(id_user),
@@ -202,4 +328,40 @@ export class DecksService {
     }
     return deck;
   }
+
+  async hasUserLikedDeck(id_user: string, id_deck: string) {
+    const like = await this.likeModel.findOne({
+      id_user: new Types.ObjectId(id_user),
+      id_deck: new Types.ObjectId(id_deck),
+    });
+    return like;
+  }
 }
+
+//ESTAS SON PRUEBAS DE DIFERENTES AGREGCIONES Y QUEDAN COMO METODO DE ESTUDIO
+//PRIMERA OPCCION QUE TUVE PARA ACTUALIZAR LA CARTA
+// await this.deckModel.aggregate([
+//   //Primero se filtra el deck por el id del deck y el id del usuario
+//   {
+//     $match: {
+//       _id: new Types.ObjectId(addcardsDto.id_deck),
+//       id_user: new Types.ObjectId(addcardsDto.id_user),
+//     },
+//   },
+//   //Se descompone el arreglo de cartas, lo que hace unwind es que por cada carta en el arreglo de cartas se crea un nuevo documento
+//   {
+//     $unwind: '$cards',
+//   },
+//   //Se busca el documento de la carta que se quiere actualizar por su id
+//   {
+//     $match: { 'cards.id': new Types.ObjectId(addcardsDto.id_card) },
+//   },
+//   //Se actualiza la carta
+//   {
+//     $set: {
+//       'cards.question': addcardsDto.question,
+//       'cards.answer': addcardsDto.answer,
+//       'cards.category': addcardsDto.category,
+//     },
+//   },
+// ]);

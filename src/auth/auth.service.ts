@@ -13,7 +13,6 @@ export class AuthService {
   ) {}
 
   async registerNewUser(registerUserDto: RegisterUserDto) {
-    console.log(registerUserDto);
     const hashedPassword = bcrypt.hashSync(registerUserDto.password, 10);
     // se pasan los valores de registerUserDto y el password encriptado al metodo de createNewUser
     await this.usersService.createNewUser({
@@ -44,13 +43,14 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid password');
     }
-    const payload = { email: user.email };
+    const payload = { id_user: user.id, email: user.email };
 
     const token = await this.jwtService.signAsync(payload);
 
     return {
       message: 'User has been logged in successfully',
       id: user.id,
+      user_name: user.user_name,
       jwt: token,
     };
   }
