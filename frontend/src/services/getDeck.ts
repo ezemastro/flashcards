@@ -9,3 +9,10 @@ export const getDeck = async (userId: string, deckId: string) => {
   if (!response.ok) throw new Error(response.statusText)
   return await response.json() as Deck
 }
+export const getDeckByUser = async (userId: string) => {
+  const url = new URL(`${API_URL}/decks/${userId}`)
+
+  const response = await fetch(url.toString())
+  if (!response.ok) throw new Error(response.statusText)
+  return await response.json() as Deck[]
+}

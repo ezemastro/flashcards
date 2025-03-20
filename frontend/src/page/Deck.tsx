@@ -137,7 +137,7 @@ export default function Deck () {
             <div className="like"><img src="" alt="" /><p>{deck?.likes}</p></div>
             <Switch opts={['Private', 'Public']} defaultChecked={deck?.public} inputRef={switchRef} onChange={() => { if (!isModified) setIsModified(true) }} className='switch' />
             <div className="cardsCount"><img src="" alt="" /><p>{deck?.cardsCount}</p></div>
-            <div className="creator">{deck?.id_user}</div>
+            <div className="creator">{deck?.id_creator.user_name}</div>
           </div>
         </div>
         <div className="categories" {...events} ref={dragRef}>

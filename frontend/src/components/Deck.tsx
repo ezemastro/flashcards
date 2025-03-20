@@ -13,6 +13,7 @@ export default function Deck ({ deck }: {deck: Deck}) {
               <img src="" alt="" />
               <span>{deck.cardsCount}</span>
             </div>
+            <Link to={`/play/${deck._id}`} className='play'>▶</Link>
             <div className="likes">
               <img src="" alt="" />
               <span>{deck.likes}</span>
@@ -25,6 +26,7 @@ export default function Deck ({ deck }: {deck: Deck}) {
           <div className="categories">
             {deck.categories?.map((category, index) => <span key={index}>{category}</span>)}
           </div>
+          <p className='creator'>{deck.id_creator.user_name}</p>
         </div>
       </Link>
     </StyledDeck>
@@ -65,8 +67,9 @@ const StyledDeck = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 1.2rem;
     padding: 1rem;
+    padding-bottom: 2rem;
     background-color: var(--s-color);
     border-radius: 0.5rem;
     box-shadow: var(--shadow);
@@ -74,6 +77,7 @@ const StyledDeck = styled.div`
     .head {
       display: flex;
       justify-content: space-between;
+      position: relative;
 
       .cards-count, .likes {
         display: flex;
@@ -91,6 +95,23 @@ const StyledDeck = styled.div`
         span {
           text-decoration: none;
         }
+      }
+
+      .play {
+        background-color: var(--black-color);
+        color: var(--white-color);
+        box-shadow: var(--shadow);
+        width: 2rem;
+        height: 2rem;
+        border-radius: 5rem;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
       }
     }
 
@@ -119,10 +140,17 @@ const StyledDeck = styled.div`
 
       span {
         background-color: var(--bg-color);
-        padding: .1rem .3rem;
+        padding: .15rem .4rem;
         border-radius: 1rem;
         font-size: 0.8rem;
       }
+    }
+
+    .creator {
+      position: absolute;
+      right: 1rem;
+      bottom: 0.5rem;
+      font-size: 0.85rem;
     }
   }
 `

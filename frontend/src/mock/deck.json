@@ -1,56 +1,59 @@
 [
   {
-    "_id": "67d0640327233e468d35efb5",
-    "name": "Ejemplo actualizado",
-    "public": true,
-    "categories": [
-        "matematicas",
-        "Historia",
-        "quimica",
-        "programacion",
-        "algebrea"
-    ],
-    "id_user": "67cb6896daada57a386dde10",
-    "cardsCount": 8,
-
-
-    "description": "Ejemplo actualizado",
-    "likes": 0
+      "_id": "67d859a0e6a26aa9119f25f5",
+      "name": "Ejemplo actualizado",
+      "public": true,
+      "categories": [
+          "matematicas",
+          "Historia",
+          "programacion",
+          "algebrea"
+      ],
+      "likes": 0,
+      "id_creator": {
+          "_id": "67d72d0eaad52afe43c0776c",
+          "user_name": "onemario"
+      },
+      "id_user": "67d72d0eaad52afe43c0776c",
+      "cardsCount": 1,
+      "description": "Falta la descripcion en la response"
   },
   {
-    "_id": "67d06403272d33e468d35efb5",
-    "name": "Ejemplo actualizado",
-    "public": true,
-    "categories": [
-        "matematicas",
-        "Historia",
-        "quimica",
-        "programacion",
-        "algebrea"
-    ],
-    "id_user": "67cb6896daada57a386dde10",
-    "cardsCount": 8,
-
-
-    "description": "Ejemplo actualizado",
-    "likes": 0
+      "_id": "67d859a0e6a26aa9a119f25f5",
+      "name": "Ejemplo actualizado",
+      "public": true,
+      "categories": [
+          "matematicas",
+          "Historia",
+          "programacion",
+          "algebrea"
+      ],
+      "likes": 0,
+      "id_creator": {
+          "_id": "67d72d0eaad52afe43c0776c",
+          "user_name": "onemario"
+      },
+      "id_user": "67d72d0eaad52afe43c0776c",
+      "cardsCount": 1,
+      "description": "Falta la descripcion en la response"
   },
   {
-    "_id": "67d06403272d33e468d35eafb5",
-    "name": "Ejemplo actualizado",
-    "public": true,
-    "categories": [
-        "matematicas",
-        "Historia",
-        "quimica",
-        "programacion",
-        "algebrea"
-    ],
-    "id_user": "67cb6896daada57a386dde10",
-    "cardsCount": 8,
-
-
-    "description": "Ejemplo actualizado",
-    "likes": 0
+      "_id": "67d85a9a0e6a26aa9a119f25f5",
+      "name": "Ejemplo actualizado",
+      "public": true,
+      "categories": [
+          "matematicas",
+          "Historia",
+          "programacion",
+          "algebrea"
+      ],
+      "likes": 0,
+      "id_creator": {
+          "_id": "67d72d0eaad52afe43c0776c",
+          "user_name": "onemario"
+      },
+      "id_user": "67d72d0eaad52afe43c0776c",
+      "cardsCount": 1,
+      "description": "Falta la descripcion en la response"
   }
 ]

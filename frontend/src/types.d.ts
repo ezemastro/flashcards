@@ -1,3 +1,8 @@
+interface User {
+  _id: string;
+  user_name: string;
+}
+
 interface Card {
   _id: string;
   question: string;
@@ -14,6 +19,7 @@ interface Deck {
   name: string;
   public: boolean;
   categories: string[];
+  id_creator: Pick<User, '_id' | 'user_name'>;
   id_user: string;
   cardsCount: number;
   description: string;

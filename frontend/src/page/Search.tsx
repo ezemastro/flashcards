@@ -6,6 +6,7 @@ import Card from '../components/Card'
 import mockResponse from '../mock/deck.json'
 import { type Search, search } from '../services/search'
 import Deck from '../components/Deck'
+import Results from '../components/Results'
 
 export default function Search () {
   // TODO - get categories
@@ -66,10 +67,10 @@ export default function Search () {
           ))}
         </section>
       </form>
-      <section className='results'>
+      <Results>
         {results.type === 'cards' && results.results.map(card => <Card key={card._id} card={card as Card} />)}
         {results.type === 'decks' && results.results.map(deck => <Deck key={deck._id} deck={deck as Deck} />)}
-      </section>
+      </Results>
     </StyledSearchMain>
   )
 }
@@ -161,17 +162,6 @@ const StyledSearchMain = styled.main`
       .category:has(input:checked) {
         background-color: var(--t-color);
       }
-    }
-  }
-  
-  .results {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem;
-
-    .card, .deck {
-      width: 15rem;
     }
   }
 `
