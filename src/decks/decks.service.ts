@@ -161,6 +161,7 @@ export class DecksService {
           name: 1,
           public: 1,
           likes: 1,
+          cards: 1,
           categories: 1,
           cardsCount: { $size: '$cards' },
         },
@@ -179,6 +180,7 @@ export class DecksService {
   }
 
   //LISTA LAS CARTAS DE UN DECK DEL USUARIO
+  //@@@@DESUSO@@@@
   async listCardsByDeckByUser(id_deck: string, id_user: string) {
     const deck = await this.findDeckByUser(id_deck, id_user);
     if (!deck) {
