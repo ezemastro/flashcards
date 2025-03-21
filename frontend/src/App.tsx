@@ -9,6 +9,7 @@ import Deck from './page/Deck'
 import { ToastContainer } from 'react-toastify'
 import { useTheme } from './hook/theme'
 import { ModalContainer } from './context/modal'
+import Play from './page/Play'
 
 function App () {
   const { theme } = useTheme()
@@ -52,6 +53,10 @@ function App () {
         {
           path: '/decks/:id',
           element: <Deck />
+        },
+        {
+          path: '/play/:id',
+          element: <Play />
         },
         {
           path: '*',

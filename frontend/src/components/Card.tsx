@@ -1,14 +1,19 @@
 import styled from 'styled-components'
 
 type Props = {
-  card: Card
+  card: Card,
+  hide: boolean,
+  handleHide: () => void
 }
 
-export default function Card ({ card }: Props) {
+export default function Card ({ card, hide, handleHide }: Props) {
   return (
     <StyledCard className="card">
       <p className="question">{card.question}</p>
-      <div className="answer">{card.answer}</div>
+      <div className={'answer' + (hide ? ' hidden' : '')} onClick={handleHide}>
+        <p>{card.answer}</p>
+        <img src="" alt="" />
+      </div>
       <div className="info">
         <div className="category">{card.category}</div>
         <div className='deck'>
@@ -45,6 +50,29 @@ const StyledCard = styled.div`
     align-items: center;
     justify-content: center;
     border-radius: 0.5rem;
+    position: relative;
+
+    img {
+      opacity: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: 2rem;
+      width: 2rem;
+      pointer-events: none;
+    }
+
+    &.hidden{ 
+      cursor: pointer;
+      p {
+      filter: blur(10px);
+      user-select: none;
+      }
+      img {
+        opacity: 1;
+      }
+    }
   }
 
   .info {
