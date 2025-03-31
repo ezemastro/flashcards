@@ -60,6 +60,16 @@ const StyledMain = styled.main`
 
   .card {
     width: 25rem;
+    height: 30rem;
+    .question {
+      font-size: 2rem;
+    }
+    .answer {
+      font-size: 1.5rem;
+    }
+    .category, .deck {
+      font-size: 1rem;
+    }
   }
 
   button {

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verificación de Email</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+    .header {
+      text-align: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px;
+      border-radius: 8px 8px 0 0;
+    }
+    .content {
+      padding: 20px;
+    }
+    .otp {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #4CAF50;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 20px;
+    }
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      margin-top: 20px;
+      font-size: 1rem;
+      color: white;
+      background-color: #4CAF50;
+      text-decoration: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Verificación de Email</h1>
+    </div>
+    <div class="content">
+      <p>Hola <%= name %>,</p>
+      <p>Gracias por registrarte en nuestra plataforma. Da click en el boton de verificar email, para verificar tu cuenta.</p>
+      <button class="button" id="verifyButton">Verificar email</button>
+      <p>Si no realizaste este registro, ignora este correo.</p>
+      <p>Saludos,<br>El equipo de soporte</p>
+    </div>
+    <div class="footer">
+      <p>Si tienes algún problema, contáctanos en soporte@example.com</p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('verifyButton').addEventListener('click', function() {
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      const raw = JSON.stringify({
+        "email": "<%= email %>",
+        "otp": "<%= otp %>"
+      });
+
+      const requestOptions = {
+        method: "PATCH",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow"
+      };
+
+      fetch("http://localhost:3000/api/auth/verify-email", requestOptions)
+        .then(response => response.text())
+        .then(result => console.log(result))
+        .catch(error => console.error('Error:', error));
+    });
+  </script>
+</body>
+</html>

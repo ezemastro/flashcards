@@ -45,7 +45,8 @@ const StyledCard = styled.div`
 
   .answer {
     background-color: var(--bg-color);
-    height: 10rem;
+    min-height: 10rem;
+    flex-grow: 1;
     display: flex;
     align-items: center;
     justify-content: center;

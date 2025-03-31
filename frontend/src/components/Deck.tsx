@@ -67,8 +67,8 @@ const StyledDeck = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 1.2rem;
-    padding: 1rem;
+    gap: 2rem;
+    padding: 1.5rem;
     padding-bottom: 2rem;
     background-color: var(--s-color);
     border-radius: 0.5rem;
