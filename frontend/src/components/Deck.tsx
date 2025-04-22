@@ -1,10 +1,36 @@
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { like, unlike } from '../services/like'
+import { useState } from 'react'
+import { useSession } from '../hook/session'
+import { LikedIcon, LikeIcon } from './Icons'
 
 export default function Deck ({ deck }: {deck: Deck}) {
+  const { session } = useSession()
+  const [liked, setLiked] = useState(Array.isArray(deck.likes) ? deck.likes.some(like => like.id_user === session?.id) : false)
+  const [likes, setLikes] = useState(Array.isArray(deck.likes) ? deck.likes.length : deck.likes)
+
+  const handleLike = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    try {
+      if (liked) {
+        setLiked(false)
+        setLikes(likes - 1)
+        await unlike(deck._id)
+      } else {
+        setLiked(true)
+        setLikes(likes + 1)
+        await like(deck._id)
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return (
     <StyledDeck className="deck">
-      <Link to={`/decks/${deck._id}`}>
+      <Link to={`/decks/${deck._id}`} state={{ deck }}>
         <div className="back-deck" />
         <div className="back-deck" />
         <div className="front-deck">
@@ -14,10 +40,10 @@ export default function Deck ({ deck }: {deck: Deck}) {
               <span>{deck.cardsCount}</span>
             </div>
             <Link to={`/play/${deck._id}`} className='play'>▶</Link>
-            <div className="likes">
-              <img src="" alt="" />
-              <span>{deck.likes}</span>
-            </div>
+            <button className="likes" onClick={handleLike}>
+              {liked ? <LikedIcon /> : <LikeIcon />}
+              <span>{likes}</span>
+            </button>
           </div>
           <div className="main">
             <h2>{deck.name}</h2>

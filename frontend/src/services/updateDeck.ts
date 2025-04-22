@@ -15,8 +15,13 @@ export const updateDeck = async ({ id, title, isPublic, desc }: Props) => {
   try {
     response = await fetch(url.toString(), {
       method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+
+      },
       body: JSON.stringify({
-        id,
+        id_deck: id,
         name: title,
         public: isPublic,
         description: desc

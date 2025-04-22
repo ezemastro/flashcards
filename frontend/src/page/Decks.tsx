@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import mockedDecks from '../mock/deck.json'
 import styled from 'styled-components'
 import Deck from '../components/Deck'
 import Results from '../components/Results'
@@ -10,7 +9,7 @@ import { toast } from 'react-toastify'
 
 export default function Cards () {
   const { session } = useSession()
-  const [decks, setDecks] = useState<Deck[]>(mockedDecks)
+  const [decks, setDecks] = useState<Deck[]>([])
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -20,7 +19,7 @@ export default function Cards () {
       return
     }
 
-    getDeckByUser(session.id)
+    getDeckByUser()
       .then(decks => setDecks(decks))
       .catch(() => toast.error('Something went wrong'))
   }, [])

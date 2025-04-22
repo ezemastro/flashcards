@@ -19,12 +19,11 @@ export const SessionProvider = ({ children }: { children: React.ReactNode }) => 
   const [session, setSession] = useState<SessionContext['session']>(null)
 
   useEffect(() => {
-    if (!getToken()) return setSession(null)
-    const session = localStorage.getItem('user')
-    console.log(session)
-    if (!session) return setSession(null)
+    if (!getToken()) return
+    const session = localStorage.getItem('session')
+    if (!session) return
     const parsedSession = JSON.parse(session)
-    if (!parsedSession.id || !parsedSession.username) return setSession(null)
+    if (!parsedSession.id || !parsedSession.username) return
     setSession({ id: parsedSession.id, username: parsedSession.username })
   }, [])
 

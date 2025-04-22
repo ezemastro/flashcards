@@ -1,9 +1,10 @@
 import styled from 'styled-components'
+import { BlindEyeIcon } from './Icons'
 
 type Props = {
   card: Card,
-  hide: boolean,
-  handleHide: () => void
+  hide?: boolean,
+  handleHide?: () => void
 }
 
 export default function Card ({ card, hide, handleHide }: Props) {
@@ -12,7 +13,7 @@ export default function Card ({ card, hide, handleHide }: Props) {
       <p className="question">{card.question}</p>
       <div className={'answer' + (hide ? ' hidden' : '')} onClick={handleHide}>
         <p>{card.answer}</p>
-        <img src="" alt="" />
+        <BlindEyeIcon />
       </div>
       <div className="info">
         <div className="category">{card.category}</div>
@@ -53,7 +54,7 @@ const StyledCard = styled.div`
     border-radius: 0.5rem;
     position: relative;
 
-    img {
+    svg {
       opacity: 0;
       position: absolute;
       top: 50%;
@@ -70,7 +71,7 @@ const StyledCard = styled.div`
       filter: blur(10px);
       user-select: none;
       }
-      img {
+      svg {
         opacity: 1;
       }
     }

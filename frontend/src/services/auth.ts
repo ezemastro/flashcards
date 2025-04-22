@@ -9,6 +9,7 @@ export const login = async (email: string, password: string) => {
   try {
     response = await fetch(url.toString(), {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     })
   } catch (error) {
@@ -29,9 +30,9 @@ export const login = async (email: string, password: string) => {
   const data = await response.json()
   saveToken(data.jwt)
 
-  if (!data.id || !data.username) console.error('No id or username in response')
+  if (!data.user.id || !data.user.user_name) console.error('No id or username in response')
 
-  return { id: data.id as string, username: data.username as string }
+  return { id: data.user.id as string, username: data.user.user_name as string }
 }
 export const register = async (username :string, email: string, password: string) => {
   const url = new URL(`${API_URL}/auth/register`)
@@ -40,6 +41,7 @@ export const register = async (username :string, email: string, password: string
   try {
     response = await fetch(url.toString(), {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_name: username, email, password })
     })
   } catch (error) {

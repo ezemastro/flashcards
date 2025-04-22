@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import Switch from '../components/Switch'
 import { useDraggable } from 'react-use-draggable-scroll'
 import Card from '../components/Card'
-import mockResponse from '../mock/deck.json'
 import { type Search, search } from '../services/search'
 import Deck from '../components/Deck'
 import Results from '../components/Results'
@@ -11,7 +10,7 @@ import Results from '../components/Results'
 export default function Search () {
   // TODO - get categories
   const [categories, setCategories] = useState<string[]>([])
-  const [results, setResults] = useState<Search<'cards' | 'decks'>>({ type: 'decks', results: mockResponse })
+  const [results, setResults] = useState<Search<'cards' | 'decks'>>({ type: 'decks', results: [] })
   const typeRef = useRef<HTMLInputElement>(null)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

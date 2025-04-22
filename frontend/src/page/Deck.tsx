@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { useSession } from '../hook/session'
-import { getDeck } from '../services/getDeck'
 import Switch from '../components/Switch'
 import Card from '../components/Card'
 import { useDraggable } from 'react-use-draggable-scroll'
@@ -24,6 +23,7 @@ export default function Deck () {
   const [isModified, setIsModified] = useState(false)
   const [categories, setCategories] = useState<string[]>([])
   const { showModal, closeModal } = useModal()
+  const { state } = useLocation()
 
   useEffect(() => {
     if (!session) {
@@ -31,14 +31,23 @@ export default function Deck () {
       navigate('/login')
       return
     }
-    if (!params.id) navigate('/')
-
-    getDeck(session!.id, params.id!)
-      .then(deck => setDeck(deck))
-      .catch(() => {
+    if (!state.deck) {
+      if (!params.id) {
         toast.error('Deck not found')
         navigate('/')
-      })
+      }
+
+      // TODO: endpoint to get deck by id
+
+      // getDeck(session.id, params.id!)
+      //   .then(deck => setDeck(deck))
+      //   .catch(() => {
+      //     toast.error('Deck not found')
+      //     navigate('/')
+      //   })
+    } else {
+      setDeck(state.deck)
+    }
   }, [])
 
   useEffect(() => {
@@ -134,7 +143,7 @@ export default function Deck () {
             />
           </div>
           <div className="data">
-            <div className="like"><img src="" alt="" /><p>{deck?.likes}</p></div>
+            <div className="like"><img src="" alt="" /><p>{Array.isArray(deck?.likes) ? deck?.likes.length : deck?.likes}</p></div>
             <Switch opts={['Private', 'Public']} defaultChecked={deck?.public} inputRef={switchRef} onChange={() => { if (!isModified) setIsModified(true) }} className='switch' />
             <div className="cardsCount"><img src="" alt="" /><p>{deck?.cardsCount}</p></div>
             <div className="creator">{deck?.id_creator.user_name}</div>

@@ -15,7 +15,7 @@ export default function Nav () {
       <div>
         {session?.username
           ? (
-            <button>
+            <button className='user'>
               {session.username}
             </button>
             )
@@ -82,6 +82,7 @@ const StyledNav = styled.nav`
     width: 14rem;
     display: flex;
     gap: 1rem;
+    justify-content: flex-end;
     
     a{
       border-radius: 1rem;
@@ -100,6 +101,15 @@ const StyledNav = styled.nav`
       background-color: transparent;
       text-decoration: underline;
       text-underline-offset: 0.4rem;
+    }
+
+    .user {
+      background-color: var(--t-color);
+      color: var(--white-color);
+      padding: 0.5rem 1rem;
+      font-size: 1.2rem;
+      border-radius: 2rem;
+      border: none;
     }
   }
 `

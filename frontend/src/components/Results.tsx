@@ -10,6 +10,7 @@ const StyledResults = styled.section`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: flex-start;
   gap: 2rem;
 
   .card, .deck {
