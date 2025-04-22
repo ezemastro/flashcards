@@ -49,8 +49,12 @@ export class AuthService {
 
     return {
       message: 'User has been logged in successfully',
-      id: user.id,
-      user_name: user.user_name,
+      user: {
+        id: user.id,
+        email: user.email,
+        user_name: user.user_name,
+        email_verified: user.email_verified,
+      },
       jwt: token,
     };
   }
